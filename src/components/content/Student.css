@@ -1,0 +1,15 @@
+ul {
+  list-style: none;
+}
+.box {
+  width: 100%;
+  margin: 0 2rem;
+}
+.heading {
+  color: #595959;
+  font-weight: bold;
+}
+td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
+}

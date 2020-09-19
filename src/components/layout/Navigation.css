@@ -1,0 +1,5 @@
+.MuiListItem-root.Mui-selected,
+.MuiListItem-root:hover {
+  background: #4d4d4d !important;
+  color: white;
+}

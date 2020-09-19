@@ -1,0 +1,10 @@
+.admission-form {
+  margin: auto;
+  width: 70%;
+}
+.application-form__content {
+  margin: 1rem;
+}
+.control-label {
+  text-align: right;
+}
