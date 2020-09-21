@@ -17,7 +17,7 @@ const findStudent = (student) => {
 export const fetchStudents = () => {
   return (dispatch) => {
     const userDataPath = localStorage.getItem('userDataPath');
-    const fileName=userDataPath+'/admission.json'
+    const fileName = userDataPath + '/admission.json';
     let students = [];
     try {
       students = JSON.parse(fs.readFileSync(fileName));
@@ -31,7 +31,7 @@ export const fetchStudents = () => {
 export const fetchStudent = (admissionNo) => {
   return (dispatch) => {
     const userDataPath = localStorage.getItem('userDataPath');
-    const fileName=userDataPath+'/admission.json'
+    const fileName = userDataPath + '/admission.json';
     let studentObject = {};
     try {
       const students = JSON.parse(fs.readFileSync(fileName));

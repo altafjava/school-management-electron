@@ -33,7 +33,7 @@ const StudentDetail = ({ fetchStudentProp, studentState, match }) => {
   const classes = useStyles();
 
   useEffect(() => {
-    fetchStudentProp(match.params.admissionNo);
+    fetchStudentProp(parseInt(match.params.admissionNo));
   }, []);
 
   let photoBase64;
