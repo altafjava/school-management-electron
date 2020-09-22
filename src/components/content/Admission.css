@@ -64,6 +64,24 @@ img {
 .error-border {
   border: 1px solid #dc3545;
 }
+.gray-border {
+  border: 1px solid #ccc;
+}
 .hide {
   display: none;
+}
+.show {
+  display: block;
+}
+.gender-container {
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  padding: 2px 0;
+}
+.error-div {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #dc3545;
 }

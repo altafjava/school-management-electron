@@ -5,18 +5,18 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import CloseIcon from '@material-ui/icons/Close';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import InfoIcon from '@material-ui/icons/Info';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ipcRenderer } from 'electron';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { EIGHT, FIVE, FOUR, LKG, NINE, NURSERY, ONE, SEVEN, SIX, TEN, THREE, TWO, UKG } from '../../constant/class';
 import fs from 'fs';
 import path from 'path';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
+import { EIGHT, FIVE, FOUR, LKG, NINE, NURSERY, ONE, SEVEN, SIX, TEN, THREE, TWO, UKG } from '../../constant/class';
 import './Admission.css';
 import './index.css';
 
@@ -79,9 +79,7 @@ const Admission = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState({});
-  const [photo, setPhoto] = useState({});
-  const [isPhotoValid, setPhotoValid] = useState(true);
-  const [photoErrorMessage, setPhotoErrorMessage] = useState('');
+  const [photo, setPhoto] = useState({ isPhotoValid: true });
   const PHOTO_SIZE = 500000;
   const PHOTO_SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
 
@@ -112,7 +110,6 @@ const Admission = () => {
     delete data.photo;
     delete data.photoObject;
     data.photoBase64String = photoBase64String;
-    console.log(photoBase64String);
     addAdmission(data);
   };
 
@@ -122,18 +119,15 @@ const Admission = () => {
     let flag = true;
     if (size > PHOTO_SIZE) {
       flag = false;
-      setPhotoValid(false);
-      setPhotoErrorMessage('Photo size should not greater than ' + PHOTO_SIZE / 1000 + ' KB');
+      setPhoto({ file: file, isPhotoValid: false, photoErrorMessage: `Photo size should not greater than ${PHOTO_SIZE / 1000}  KB` });
     }
     if (!PHOTO_SUPPORTED_FORMATS.includes(type)) {
       flag = false;
-      setPhotoValid(false);
-      setPhotoErrorMessage('Only JPG & PNG are allowed');
+      setPhoto({ file: file, isPhotoValid: false, photoErrorMessage: 'Only JPG & PNG are allowed' });
     }
     if (flag) {
-      setPhotoValid(true);
       setImage(URL.createObjectURL(file));
-      setPhoto(file);
+      setPhoto({ file: file, isPhotoValid: true });
     }
   };
   const uploadClick = () => {
@@ -141,6 +135,7 @@ const Admission = () => {
     inputTypeFilePhoto.click();
   };
   const currentYear = new Date().getFullYear();
+
   return (
     <div className={classes.container}>
       <div className='form-group content__heading'>Admission Form</div>
@@ -161,6 +156,7 @@ const Admission = () => {
               fatherName: '',
               motherName: '',
               dateOfBirth: '',
+              gender: '',
               class: '',
               session: currentYear + '-' + (currentYear + 1),
               aadhar: '',
@@ -184,6 +180,7 @@ const Admission = () => {
                 .matches(/^[A-Za-z ]*$/, 'Please enter valid name')
                 .required('Mother Name is required'),
               dateOfBirth: Yup.date().required('Date of Birth is required'),
+              gender: Yup.string().required('Gender is required'),
               class: Yup.string().required('Class is required'),
               session: Yup.string().required('Session is required'),
               aadhar: Yup.string()
@@ -195,14 +192,15 @@ const Admission = () => {
                 .matches(/^[6789]\d{9}$/, 'Mobile no is not valid')
                 .required('Mobile is required'),
               address: Yup.string().min(10, 'Address cannot be less than 10 characters').required('Address is required'),
-              photo: Yup.mixed().required('Photo is required'),
             })}
-            onSubmit={(fields) => {
-              console.log('onsubmit=', fields);
-              if (isPhotoValid) handleSubmit(fields);
+            onSubmit={(values) => {
+              if (values.photo === '') {
+                setPhoto({ isPhotoValid: false, photoErrorMessage: 'Photo is required' });
+              }
+              if (photo.isPhotoValid) handleSubmit(values);
             }}
           >
-            {({ errors, touched, dirty, isSubmitting, handleReset, setFieldValue }) => (
+            {({ values, errors, touched, dirty, isSubmitting, handleReset, setFieldValue }) => (
               <Form>
                 <div className={`form-group ${classes.flex}`}>
                   <label className='col-sm-4 control-label'>Admission Number</label>
@@ -262,6 +260,22 @@ const Admission = () => {
                       className={'form-control' + (errors.dateOfBirth && touched.dateOfBirth ? ' is-invalid' : '')}
                     />
                     <ErrorMessage name='dateOfBirth' component='div' className='invalid-feedback' />
+                  </div>
+                </div>
+                <div className={`form-group ${classes.flex}`}>
+                  <label className='col-sm-4 control-label'>Gender</label>
+                  <div className='col-sm-8'>
+                    <Field
+                      id='gender'
+                      name='gender'
+                      as='select'
+                      className={'form-control' + (errors.gender && touched.gender ? ' is-invalid' : '')}
+                    >
+                      <option value='0'>--Select--</option>
+                      <option value='M'>Male</option>
+                      <option value='F'>Female</option>
+                    </Field>
+                    <ErrorMessage name='gender' component='div' className='invalid-feedback' />
                   </div>
                 </div>
                 <div className={`form-group ${classes.flex}`}>
@@ -360,7 +374,7 @@ const Admission = () => {
                 <div className={`form-group ${classes.flex}`}>
                   <label className='col-sm-4 control-label'>Photo</label>
                   <div className='col-sm-8'>
-                    <div className={isPhotoValid ? 'photo__container' : 'photo__container error-border'}>
+                    <div className={photo.isPhotoValid ? 'photo__container' : 'photo__container error-border'}>
                       <div className='photo__upload' onClick={uploadClick}>
                         <CloudUploadIcon />
                         <p>Choose Photo</p>
@@ -370,29 +384,29 @@ const Admission = () => {
                           <tbody>
                             <tr>
                               <td className='align-right'>Name :</td>
-                              <td>{photo.name}</td>
+                              <td>{photo.file && photo.file.name}</td>
                             </tr>
                             <tr>
                               <td className='align-right'>Size :</td>
-                              {photo.size && <td>{`${photo.size / 1000} KB`}</td>}
+                              {photo.file && <td>{`${photo.file.size / 1000} KB`}</td>}
                             </tr>
                             <tr>
                               <td className='align-right'>Type :</td>
-                              <td>{photo.type}</td>
+                              <td>{photo.file && photo.file.type}</td>
                             </tr>
                           </tbody>
                         </table>
                       </div>
                       <div className='photo__image'>
-                        {Object.keys(image).length === 0 && image.constructor === Object ? (
+                        {(Object.keys(image).length === 0 && image.constructor === Object) || !photo.isPhotoValid ? (
                           <AccountBoxIcon style={{ fontSize: 130 }} />
                         ) : (
                           <img src={image} alt='photo' />
                         )}
                       </div>
                     </div>
-                    <div className={isPhotoValid ? 'hide' : 'photo__validation'}>{photoErrorMessage}</div>
-                    <ErrorMessage name='photo' component='div' className='invalid-feedback' />
+                    <div className={photo.isPhotoValid ? 'hide' : 'photo__validation'}>{photo.photoErrorMessage}</div>
+                    {/* <ErrorMessage name='photo' component='div' className='invalid-feedback' /> */}
                     <div className='hide'>
                       <input
                         id='inputTypeFilePhoto'
