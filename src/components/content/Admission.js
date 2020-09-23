@@ -135,6 +135,72 @@ const Admission = () => {
     inputTypeFilePhoto.click();
   };
   const currentYear = new Date().getFullYear();
+  // const initialValues = {
+  //   admissionNo: '',
+  //   studentName: '',
+  //   fatherName: '',
+  //   motherName: '',
+  //   dateOfBirth: '',
+  //   gender: '',
+  //   class: '',
+  //   session: currentYear + '-' + (currentYear + 1),
+  //   aadhar: '',
+  //   caste: '',
+  //   mobile: '',
+  //   address: '',
+  //   photo: '',
+  // };
+  const genderArray = ['M', 'F'];
+  const classArray = [NURSERY, LKG, UKG, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN];
+  const casteArray = ['SC', 'ST', 'OBC', 'General'];
+  const month = Math.floor(Math.random() * (12 - 1) + 1);
+  const dd = Math.floor(Math.random() * (30 - 1) + 1);
+  const year = Math.floor(Math.random() * (2015 - 2005) + 2005);
+  const dob =
+    year.toString() + '-' + (month.toString().length === 2 ? month : '0' + month) + '-' + (dd.toString().length === 2 ? dd : '0' + dd);
+  const initialValues = {
+    admissionNo: Math.floor(Math.random() * (10000 - 1) + 1),
+    studentName: (Math.random().toString(20).substring(2, 10) + Math.random().toString(20).substring(2, 10)).replace(/[0-9]/g, ''),
+    fatherName: (Math.random().toString(20).substring(2, 10) + Math.random().toString(20).substring(2, 10)).replace(/[0-9]/g, ''),
+    motherName: (Math.random().toString(20).substring(2, 10) + Math.random().toString(20).substring(2, 10)).replace(/[0-9]/g, ''),
+    dateOfBirth: dob,
+    gender: genderArray[Math.floor(Math.random() * genderArray.length)],
+    class: classArray[Math.floor(Math.random() * classArray.length)],
+    session: currentYear + '-' + (currentYear + 1),
+    aadhar: Math.floor(100000000000 + Math.random() * 900000000000),
+    caste: casteArray[Math.floor(Math.random() * casteArray.length)],
+    mobile: '9' + Math.floor(100000000 + Math.random() * 900000000),
+    address: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+    photo: '',
+  };
+  const validationSchema = Yup.object().shape({
+    admissionNo: Yup.number().positive('Admission No should not be negative').required('Addmission No is required'),
+    studentName: Yup.string()
+      .min(3, 'Name cannot be less than 3 characters')
+      .matches(/^[A-Za-z ]*$/, 'Please enter valid name')
+      .required('Student Name is required'),
+    fatherName: Yup.string()
+      .min(3, 'Name cannot be less than 3 characters')
+      .matches(/^[A-Za-z ]*$/, 'Please enter valid name')
+      .required('Father Name is required'),
+    motherName: Yup.string()
+      .min(3, 'Name cannot be less than 3 characters')
+      .matches(/^[A-Za-z ]*$/, 'Please enter valid name')
+      .required('Mother Name is required'),
+    dateOfBirth: Yup.date().required('Date of Birth is required'),
+    gender: Yup.string().required('Gender is required'),
+    class: Yup.string().required('Class is required'),
+    session: Yup.string().required('Session is required'),
+    aadhar: Yup.string()
+      .matches(/^[0-9]*$/, 'Aadhar must be numeric only')
+      .length(12, 'Aadhar must be 12 digits only')
+      .required('Aadhar is required'),
+    caste: Yup.string().required('Caste is required'),
+    mobile: Yup.string()
+      .matches(/^[6789]\d{9}$/, 'Mobile no is not valid')
+      .required('Mobile is required'),
+    address: Yup.string().min(10, 'Address cannot be less than 10 characters').required('Address is required'),
+  });
 
   return (
     <div className={classes.container}>
@@ -148,287 +214,243 @@ const Admission = () => {
             <Typography gutterBottom>Addmission Form successfully Saved</Typography>
           </DialogContent>
         </Dialog>
-        <div className=''>
-          <Formik
-            initialValues={{
-              admissionNo: '',
-              studentName: '',
-              fatherName: '',
-              motherName: '',
-              dateOfBirth: '',
-              gender: '',
-              class: '',
-              session: currentYear + '-' + (currentYear + 1),
-              aadhar: '',
-              caste: '',
-              mobile: '',
-              address: '',
-              photo: '',
-            }}
-            validationSchema={Yup.object().shape({
-              admissionNo: Yup.number().positive('Admission No should not be negative').required('Addmission No is required'),
-              studentName: Yup.string()
-                .min(3, 'Name cannot be less than 3 characters')
-                .matches(/^[A-Za-z ]*$/, 'Please enter valid name')
-                .required('Student Name is required'),
-              fatherName: Yup.string()
-                .min(3, 'Name cannot be less than 3 characters')
-                .matches(/^[A-Za-z ]*$/, 'Please enter valid name')
-                .required('Father Name is required'),
-              motherName: Yup.string()
-                .min(3, 'Name cannot be less than 3 characters')
-                .matches(/^[A-Za-z ]*$/, 'Please enter valid name')
-                .required('Mother Name is required'),
-              dateOfBirth: Yup.date().required('Date of Birth is required'),
-              gender: Yup.string().required('Gender is required'),
-              class: Yup.string().required('Class is required'),
-              session: Yup.string().required('Session is required'),
-              aadhar: Yup.string()
-                .matches(/^[0-9]*$/, 'Aadhar must be numeric only')
-                .length(12, 'Aadhar must be 12 digits only')
-                .required('Aadhar is required'),
-              caste: Yup.string().required('Caste is required'),
-              mobile: Yup.string()
-                .matches(/^[6789]\d{9}$/, 'Mobile no is not valid')
-                .required('Mobile is required'),
-              address: Yup.string().min(10, 'Address cannot be less than 10 characters').required('Address is required'),
-            })}
-            onSubmit={(values) => {
-              if (values.photo === '') {
-                setPhoto({ isPhotoValid: false, photoErrorMessage: 'Photo is required' });
-              }
-              if (photo.isPhotoValid) handleSubmit(values);
-            }}
-          >
-            {({ values, errors, touched, dirty, isSubmitting, handleReset, setFieldValue }) => (
-              <Form>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Admission Number</label>
-                  <div className='col-sm-8'>
-                    <Field
-                      id='admissionNo'
-                      name='admissionNo'
-                      type='number'
-                      className={'form-control' + (errors.admissionNo && touched.admissionNo ? ' is-invalid' : '')}
-                    />
-                    <ErrorMessage name='admissionNo' component='div' className='invalid-feedback' />
-                  </div>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={(values) => {
+            if (values.photo === '') {
+              setPhoto({ isPhotoValid: false, photoErrorMessage: 'Photo is required' });
+            }
+            if (values.photo !== '' && photo.isPhotoValid) handleSubmit(values);
+          }}
+        >
+          {({ errors, touched, dirty, isSubmitting, handleReset, setFieldValue }) => (
+            <Form>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Admission Number</label>
+                <div className='col-sm-8'>
+                  <Field
+                    id='admissionNo'
+                    name='admissionNo'
+                    type='number'
+                    className={'form-control' + (errors.admissionNo && touched.admissionNo ? ' is-invalid' : '')}
+                  />
+                  <ErrorMessage name='admissionNo' component='div' className='invalid-feedback' />
                 </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Student Name</label>
-                  <div className='col-sm-8'>
-                    <Field
-                      id='studentName'
-                      name='studentName'
-                      type='text'
-                      className={'form-control' + (errors.studentName && touched.studentName ? ' is-invalid' : '')}
-                    />
-                    <ErrorMessage name='studentName' component='div' className='invalid-feedback' />
-                  </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Student Name</label>
+                <div className='col-sm-8'>
+                  <Field
+                    id='studentName'
+                    name='studentName'
+                    type='text'
+                    className={'form-control' + (errors.studentName && touched.studentName ? ' is-invalid' : '')}
+                  />
+                  <ErrorMessage name='studentName' component='div' className='invalid-feedback' />
                 </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Father Name</label>
-                  <div className='col-sm-8'>
-                    <Field
-                      id='fatherName'
-                      name='fatherName'
-                      type='text'
-                      className={'form-control' + (errors.fatherName && touched.fatherName ? ' is-invalid' : '')}
-                    />
-                    <ErrorMessage name='fatherName' component='div' className='invalid-feedback' />
-                  </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Father Name</label>
+                <div className='col-sm-8'>
+                  <Field
+                    id='fatherName'
+                    name='fatherName'
+                    type='text'
+                    className={'form-control' + (errors.fatherName && touched.fatherName ? ' is-invalid' : '')}
+                  />
+                  <ErrorMessage name='fatherName' component='div' className='invalid-feedback' />
                 </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Mother Name</label>
-                  <div className='col-sm-8'>
-                    <Field
-                      id='motherName'
-                      name='motherName'
-                      type='text'
-                      className={'form-control' + (errors.motherName && touched.motherName ? ' is-invalid' : '')}
-                    />
-                    <ErrorMessage name='motherName' component='div' className='invalid-feedback' />
-                  </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Mother Name</label>
+                <div className='col-sm-8'>
+                  <Field
+                    id='motherName'
+                    name='motherName'
+                    type='text'
+                    className={'form-control' + (errors.motherName && touched.motherName ? ' is-invalid' : '')}
+                  />
+                  <ErrorMessage name='motherName' component='div' className='invalid-feedback' />
                 </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Date Of Birth</label>
-                  <div className='col-sm-8'>
-                    <Field
-                      id='dateOfBirth'
-                      name='dateOfBirth'
-                      type='date'
-                      className={'form-control' + (errors.dateOfBirth && touched.dateOfBirth ? ' is-invalid' : '')}
-                    />
-                    <ErrorMessage name='dateOfBirth' component='div' className='invalid-feedback' />
-                  </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Date Of Birth</label>
+                <div className='col-sm-8'>
+                  <Field
+                    id='dateOfBirth'
+                    name='dateOfBirth'
+                    type='date'
+                    className={'form-control' + (errors.dateOfBirth && touched.dateOfBirth ? ' is-invalid' : '')}
+                  />
+                  <ErrorMessage name='dateOfBirth' component='div' className='invalid-feedback' />
                 </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Gender</label>
-                  <div className='col-sm-8'>
-                    <Field
-                      id='gender'
-                      name='gender'
-                      as='select'
-                      className={'form-control' + (errors.gender && touched.gender ? ' is-invalid' : '')}
-                    >
-                      <option value='0'>--Select--</option>
-                      <option value='M'>Male</option>
-                      <option value='F'>Female</option>
-                    </Field>
-                    <ErrorMessage name='gender' component='div' className='invalid-feedback' />
-                  </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Gender</label>
+                <div className='col-sm-8'>
+                  <Field
+                    id='gender'
+                    name='gender'
+                    as='select'
+                    className={'form-control' + (errors.gender && touched.gender ? ' is-invalid' : '')}
+                  >
+                    <option value='0'>--Select--</option>
+                    <option value='M'>Male</option>
+                    <option value='F'>Female</option>
+                  </Field>
+                  <ErrorMessage name='gender' component='div' className='invalid-feedback' />
                 </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Class</label>
-                  <div className='col-sm-8'>
-                    <Field
-                      id='class'
-                      name='class'
-                      as='select'
-                      className={'form-control' + (errors.class && touched.class ? ' is-invalid' : '')}
-                    >
-                      <option value='0'>--Select--</option>
-                      <option value={NURSERY}>{NURSERY}</option>
-                      <option value={LKG}>{LKG}</option>
-                      <option value={UKG}>{UKG}</option>
-                      <option value={ONE}>{ONE}</option>
-                      <option value={TWO}>{TWO}</option>
-                      <option value={THREE}>{THREE}</option>
-                      <option value={FOUR}>{FOUR}</option>
-                      <option value={FIVE}>{FIVE}</option>
-                      <option value={SIX}>{SIX}</option>
-                      <option value={SEVEN}>{SEVEN}</option>
-                      <option value={EIGHT}>{EIGHT}</option>
-                      <option value={NINE}>{NINE}</option>
-                      <option value={TEN}>{TEN}</option>
-                    </Field>
-                    <ErrorMessage name='class' component='div' className='invalid-feedback' />
-                  </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Class</label>
+                <div className='col-sm-8'>
+                  <Field
+                    id='class'
+                    name='class'
+                    as='select'
+                    className={'form-control' + (errors.class && touched.class ? ' is-invalid' : '')}
+                  >
+                    <option value='0'>--Select--</option>
+                    <option value={NURSERY}>{NURSERY}</option>
+                    <option value={LKG}>{LKG}</option>
+                    <option value={UKG}>{UKG}</option>
+                    <option value={ONE}>{ONE}</option>
+                    <option value={TWO}>{TWO}</option>
+                    <option value={THREE}>{THREE}</option>
+                    <option value={FOUR}>{FOUR}</option>
+                    <option value={FIVE}>{FIVE}</option>
+                    <option value={SIX}>{SIX}</option>
+                    <option value={SEVEN}>{SEVEN}</option>
+                    <option value={EIGHT}>{EIGHT}</option>
+                    <option value={NINE}>{NINE}</option>
+                    <option value={TEN}>{TEN}</option>
+                  </Field>
+                  <ErrorMessage name='class' component='div' className='invalid-feedback' />
                 </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Session</label>
-                  <div className='col-sm-8'>
-                    <Field
-                      id='session'
-                      name='session'
-                      type='text'
-                      className={'form-control' + (errors.session && touched.session ? ' is-invalid' : '')}
-                    />
-                    <ErrorMessage name='session' component='div' className='invalid-feedback' />
-                  </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Session</label>
+                <div className='col-sm-8'>
+                  <Field
+                    id='session'
+                    name='session'
+                    type='text'
+                    className={'form-control' + (errors.session && touched.session ? ' is-invalid' : '')}
+                  />
+                  <ErrorMessage name='session' component='div' className='invalid-feedback' />
                 </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Aadhar Card No</label>
-                  <div className='col-sm-8'>
-                    <Field
-                      id='aadhar'
-                      name='aadhar'
-                      type='text'
-                      className={'form-control' + (errors.aadhar && touched.aadhar ? ' is-invalid' : '')}
-                    />
-                    <ErrorMessage name='aadhar' component='div' className='invalid-feedback' />
-                  </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Aadhar Card No</label>
+                <div className='col-sm-8'>
+                  <Field
+                    id='aadhar'
+                    name='aadhar'
+                    type='text'
+                    className={'form-control' + (errors.aadhar && touched.aadhar ? ' is-invalid' : '')}
+                  />
+                  <ErrorMessage name='aadhar' component='div' className='invalid-feedback' />
                 </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Caste</label>
-                  <div className='col-sm-8'>
-                    <Field
-                      id='caste'
-                      name='caste'
-                      as='select'
-                      className={'form-control' + (errors.caste && touched.caste ? ' is-invalid' : '')}
-                    >
-                      <option value='0'>--Select--</option>
-                      <option value='SC'>SC</option>
-                      <option value='ST'>ST</option>
-                      <option value='OBC'>OBC</option>
-                      <option value='General'>General</option>
-                    </Field>
-                    <ErrorMessage name='caste' component='div' className='invalid-feedback' />
-                  </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Caste</label>
+                <div className='col-sm-8'>
+                  <Field
+                    id='caste'
+                    name='caste'
+                    as='select'
+                    className={'form-control' + (errors.caste && touched.caste ? ' is-invalid' : '')}
+                  >
+                    <option value='0'>--Select--</option>
+                    <option value='SC'>SC</option>
+                    <option value='ST'>ST</option>
+                    <option value='OBC'>OBC</option>
+                    <option value='General'>General</option>
+                  </Field>
+                  <ErrorMessage name='caste' component='div' className='invalid-feedback' />
                 </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Mobile</label>
-                  <div className='col-sm-8'>
-                    <Field
-                      id='mobile'
-                      name='mobile'
-                      type='text'
-                      className={'form-control' + (errors.mobile && touched.mobile ? ' is-invalid' : '')}
-                    />
-                    <ErrorMessage name='mobile' component='div' className='invalid-feedback' />
-                  </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Mobile</label>
+                <div className='col-sm-8'>
+                  <Field
+                    id='mobile'
+                    name='mobile'
+                    type='text'
+                    className={'form-control' + (errors.mobile && touched.mobile ? ' is-invalid' : '')}
+                  />
+                  <ErrorMessage name='mobile' component='div' className='invalid-feedback' />
                 </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Address</label>
-                  <div className='col-sm-8'>
-                    <Field
-                      id='address'
-                      name='address'
-                      as='textarea'
-                      className={'form-control' + (errors.address && touched.address ? ' is-invalid' : '')}
-                    />
-                    <ErrorMessage name='address' component='div' className='invalid-feedback' />
-                  </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Address</label>
+                <div className='col-sm-8'>
+                  <Field
+                    id='address'
+                    name='address'
+                    as='textarea'
+                    className={'form-control' + (errors.address && touched.address ? ' is-invalid' : '')}
+                  />
+                  <ErrorMessage name='address' component='div' className='invalid-feedback' />
                 </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <label className='col-sm-4 control-label'>Photo</label>
-                  <div className='col-sm-8'>
-                    <div className={photo.isPhotoValid ? 'photo__container' : 'photo__container error-border'}>
-                      <div className='photo__upload' onClick={uploadClick}>
-                        <CloudUploadIcon />
-                        <p>Choose Photo</p>
-                      </div>
-                      <div className='photo__details'>
-                        <table>
-                          <tbody>
-                            <tr>
-                              <td className='align-right'>Name :</td>
-                              <td>{photo.file && photo.file.name}</td>
-                            </tr>
-                            <tr>
-                              <td className='align-right'>Size :</td>
-                              {photo.file && <td>{`${photo.file.size / 1000} KB`}</td>}
-                            </tr>
-                            <tr>
-                              <td className='align-right'>Type :</td>
-                              <td>{photo.file && photo.file.type}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div className='photo__image'>
-                        {(Object.keys(image).length === 0 && image.constructor === Object) || !photo.isPhotoValid ? (
-                          <AccountBoxIcon style={{ fontSize: 130 }} />
-                        ) : (
-                          <img src={image} alt='photo' />
-                        )}
-                      </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <label className='col-sm-4 control-label'>Photo</label>
+                <div className='col-sm-8'>
+                  <div className={photo.isPhotoValid ? 'photo__container' : 'photo__container error-border'}>
+                    <div className='photo__upload' onClick={uploadClick}>
+                      <CloudUploadIcon />
+                      <p>Choose Photo</p>
                     </div>
-                    <div className={photo.isPhotoValid ? 'hide' : 'photo__validation'}>{photo.photoErrorMessage}</div>
-                    {/* <ErrorMessage name='photo' component='div' className='invalid-feedback' /> */}
-                    <div className='hide'>
-                      <input
-                        id='inputTypeFilePhoto'
-                        type='file'
-                        onChange={(e) => {
-                          onChangePhoto(e.currentTarget.files[0]);
-                          setFieldValue('photo', e.currentTarget.files[0]);
-                        }}
-                      />
+                    <div className='photo__details'>
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td className='align-right'>Name :</td>
+                            <td>{photo.file && photo.file.name}</td>
+                          </tr>
+                          <tr>
+                            <td className='align-right'>Size :</td>
+                            {photo.file && <td>{`${photo.file.size / 1000} KB`}</td>}
+                          </tr>
+                          <tr>
+                            <td className='align-right'>Type :</td>
+                            <td>{photo.file && photo.file.type}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className='photo__image'>
+                      {(Object.keys(image).length === 0 && image.constructor === Object) || !photo.isPhotoValid ? (
+                        <AccountBoxIcon style={{ fontSize: 130 }} />
+                      ) : (
+                        <img src={image} alt='photo' />
+                      )}
                     </div>
                   </div>
-                </div>
-                <div className={`form-group ${classes.flex}`}>
-                  <div className='col-sm-12 center'>
-                    <input type='submit' className='btn btn-info' name='submit' value='Save' disabled={!dirty && isSubmitting} />
-                    <input type='button' className='btn btn-danger' name='reset' value='Reset' disabled={!dirty} onClick={handleReset} />
+                  <div className={photo.isPhotoValid ? 'hide' : 'photo__validation'}>{photo.photoErrorMessage}</div>
+                  <div className='hide'>
+                    <input
+                      id='inputTypeFilePhoto'
+                      type='file'
+                      onChange={(e) => {
+                        onChangePhoto(e.currentTarget.files[0]);
+                        setFieldValue('photo', e.currentTarget.files[0]);
+                      }}
+                    />
                   </div>
                 </div>
-              </Form>
-            )}
-          </Formik>
-        </div>
+              </div>
+              <div className={`form-group ${classes.flex}`}>
+                <div className='col-sm-12 center'>
+                  <input type='submit' className='btn btn-info' name='submit' value='Save' disabled={!dirty && isSubmitting} />
+                  <input type='button' className='btn btn-danger' name='reset' value='Reset' disabled={!dirty} onClick={handleReset} />
+                </div>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   );
