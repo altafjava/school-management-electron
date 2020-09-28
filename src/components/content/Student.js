@@ -61,7 +61,7 @@ const Student = ({ fetchStudentsProp, studentsProp }) => {
         </form>
       </div>
       <hr />
-      <div className='form-group'>
+      <div id='student-list' className='form-group'>
         <table>
           <thead>
             <tr>

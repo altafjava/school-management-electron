@@ -17,7 +17,6 @@ if (process.env.NODE_ENV !== undefined && process.env.NODE_ENV === 'development'
 
 const store = new Store();
 const userDataPath = store.getUserDataPath();
-
 let mainWindow;
 function createMainWindow() {
   process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
@@ -27,7 +26,7 @@ function createMainWindow() {
     minHeight: 800,
     minWidth: 1200,
     show: false,
-    icon: './assets/icons/icon.png',
+    icon: './assets/icon.ico',
     webPreferences: {
       nodeIntegration: true,
     },
@@ -91,6 +90,11 @@ ipcMain.on('admission:add', (e, admissionData) => {
   } catch (error) {
     console.log(error);
   }
+});
+
+ipcMain.on('print', (event, content) => {
+  console.log('main.js print');
+  workerWindow.webContents.send('print', content);
 });
 
 function notify() {

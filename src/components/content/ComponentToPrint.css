@@ -1,0 +1,71 @@
+.box1 {
+  display: flex;
+  margin-top: 2rem;
+}
+.box1__container--width {
+  width: 70%;
+}
+.box2 {
+  width: 80%;
+  margin: auto;
+}
+.box2__container {
+  display: flex;
+}
+.box2__container--width {
+  width: 50%;
+}
+.box3__container--padding {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+.address-width1 {
+  width: 25%;
+}
+.address-width2 {
+  width: 75%;
+}
+.box4__container {
+  display: flex;
+  justify-content: flex-end;
+}
+.box4__container--margin {
+  margin: 5rem 4rem 0 4rem;
+}
+#admission-fee-table {
+  width: 70%;
+  margin: 3rem auto;
+}
+#admission-fee-table table,
+th,
+td {
+  border: 1px solid black;
+}
+#admission-fee-table .table-heading {
+  text-align: center;
+  font-weight: bold;
+}
+#admission-fee-table td {
+  padding: 0.5rem;
+}
+#admission-fee-table .sr {
+  width: 4rem;
+  text-align: center;
+}
+#admission-fee-table .amount {
+  text-align: right;
+  padding-right: 2rem;
+}
+#admission-fee-table .particulars {
+  padding-left: 1rem;
+}
+#admission-fee-table .net-amount-payable {
+  text-align: right;
+  padding-right: 2rem;
+  font-weight: bold;
+  background: #f2f2f2;
+}
+#admission-fee-table .net-amount {
+  font-weight: bold;
+  background: #f2f2f2;
+}

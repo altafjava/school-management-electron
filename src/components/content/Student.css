@@ -9,7 +9,8 @@ ul {
   color: #595959;
   font-weight: bold;
 }
-td {
+#student-list td {
+  border: none;
   padding: 0.5rem;
   border-bottom: 1px solid #ddd;
 }

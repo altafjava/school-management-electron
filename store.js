@@ -13,7 +13,7 @@ class Store {
     }
   }
   getUserDataPath() {
-    return this.path.replaceAll('\\', '/');
+    return this.path.replace(/\\/g, '/');
   }
   add(admissionData) {
     fs.readFile(this.fileName, 'utf8', (err, data) => {

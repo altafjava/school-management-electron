@@ -35,7 +35,6 @@ const theme = createMuiTheme({
     },
     flex: {
       display: 'flex',
-      alignItems: 'center',
     },
     flex__column: {
       display: 'flex',
